@@ -1,0 +1,15 @@
+node_modules
+
+/build
+/public/build
+/server-build
+.env
+
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/tests/mocks/fixtures/email/*.json
+/coverage
+
+package.json
+package-lock.json
