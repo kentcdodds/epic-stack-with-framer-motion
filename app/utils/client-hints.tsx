@@ -14,6 +14,14 @@ export const clientHints = {
 			return value === 'dark' ? 'dark' : 'light'
 		},
 	},
+	reducedMotion: {
+		cookieName: 'CH-prefers-reduced-motion',
+		getValueCode: `!window.matchMedia('(prefers-reduced-motion: no-preference)').matches`,
+		fallback: false,
+		transform(value: string | null) {
+			return value === 'true'
+		},
+	},
 	// add other hints here
 }
 
@@ -79,14 +87,24 @@ export function useHints() {
 export function ClientHintCheck({ nonce }: { nonce: string }) {
 	React.useEffect(() => {
 		const themeQuery = window.matchMedia('(prefers-color-scheme: dark)')
+		const motionQuery = window.matchMedia(
+			'(prefers-reduced-motion: no-preference)',
+		)
 		function handleThemeChange() {
 			document.cookie = `${clientHints.theme.cookieName}=${
 				themeQuery.matches ? 'dark' : 'light'
 			}`
 		}
+		function handleMotionChange() {
+			document.cookie = `${
+				clientHints.reducedMotion.cookieName
+			}=${!motionQuery.matches}`
+		}
 		themeQuery.addEventListener('change', handleThemeChange)
+		motionQuery.addEventListener('change', handleMotionChange)
 		return () => {
 			themeQuery.removeEventListener('change', handleThemeChange)
+			motionQuery.removeEventListener('change', handleMotionChange)
 		}
 	}, [])
 
